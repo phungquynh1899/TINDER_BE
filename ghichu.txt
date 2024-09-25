@@ -1,0 +1,87 @@
+1. npm init
+2. tạo thư mục src và tạo entry file app.js
+3. npm i express
+4. tạo server đầu tiên, tạo router handler đầu tiên
+5. npm i -g nodemon 
+6. vào package.json scripts gõ "start": "node src/app.js", "dev": "nodemon src/app.js"
+
+-------------
+tại sao cần nodemon? 
+(mỗi lần cập nhật code là phải ctrl c rồi node src/app.js rất phiền)
+nodemon src/app.js giống hệt node src/app.js nhưng mỗi lần save code thì node tự khởi động lại server 
+sau này ta chỉ cần gõ nodemon src/app.js hoặc npm run dev là được
+--------------
+tại sao có package.json lại còn có thêm package-lock.json nữa? 
+1. package.json dùng để lưu các dependencies mà mình tự tay cài vào bằng lệnh npm i express, npm i electron
+nhưng express, electron cũng có những dependencies khác như babel, etag,... 
+file package-lock.json được dùng để lưu babel, etag.... (lưu dependencies of dependencies)
+2. package.json lưu ^4.19.2 nhưng chưa chắc cái mà app của mình đang dùng là 4.19.2 , có thể app mình đang dùng 4.20.2 
+package-lock.json sẽ lưu version mà app mình đang dùng
+--------------
+4.19.2 
+4 là major 
+19 là minor
+2 là patch 
+update ở patch thường là fix bug, nếu 1 app đang cài express ở 4.19.2 , cài lên 4.19.5 thì mọi chức năng ko ảnh hướng 
+update ở minor thường là new feature, nhưng có backward compatible, nếu 1 app đang cài express ở 4.19.2, cài lên 4.20.2 thì mọi chức năng cũ ko bị ảnh hưởng
+update ở major thường là breaking changes (ko có backward compatible), nếu 1 app đang cài express ở 4.19.2, thì cài lên 5.0.0 thì mọi chức năng cũ có thể ko hoạt động như bình thường hoặc bị dừng luôn, mình phải viét lại app
+------------------
+
+quy ước: dependencies cấp 1: là dependencies mình tự tay cài bằng npm install electron chẳng hàn
+dependencies cấp 2: là dependencies của electron, vd: etag
+dependencies cấp 3: là dependencies của etag, vd xxx
+
+nếu trên thế giới chỉ có file package.json , ko có vụ ^ ~ 
+thì một mình package.json (chứa express và tất cả dependencies (dependencies ko có ^~ luôn)) thì thế giới hoà bình
+nhưng vì có ~ và ^ (hướng dẫn update) nên mọi chuyện bắt đầu rắc rối
+--------------------------
+nếu trên thế giới chỉ có file package.json, ko có file package-lock.json, 
+tất cả các cấp dependencies đều được lưu trong package.json
+thi1: nếu có ~^ ở dependencies cấp 1 trong package.json
+ở máy 1 đang ghi là express ~4.19.2
+khi bưng file package.json từ máy 1 sang máy 2,
+mình gõ npm install, thu được express 4.19.5 ở máy 2 (vì ~ cho phép)
+===> ngay tại đây đã thấy 2 máy khác nhau rồi
+
+th2: khi ko ~ ^ ở dependency cấp 1 trong package.json, cấp 2 và cấp 3 có ~ ^
+ở máy 1 đang ghi là express 4.19.2, etag ~1.1.1
+khi bưng file package.json từ máy 1 sang máy 2, 
+mình gõ npm install, thu được express 4.19.2 ok giống máy 1
+nhưng có thể etag 4.2.2 ở máy 2 (vì ~ cho phép)
+
+bưng file package.json từ máy 1 sang máy 3, 
+mình gõ npm install, thu được express 4.19.2 ok giống máy 1
+nhưng có thể etag 4.2.5 ở máy 3 (vì ~ cho phép)
+
+cho dù express fixed cứng ở 4.19.2, nhưng mỗi lần cài là có một bản etag khác nhau 
+===> mình muốn khi đem app đến bất cứ máy lạ nào,
+thì tất cả dependencies phải giống y hệt cái trong máy 1 của mình
+===> npm giới thiệu package-lock.json, thong thường dependencies cấp 2 sẽ không có ~ ^ gì hết (để phục vụ mục đích fix cứng dependencies cấp 2)
+
+package.json ở máy 1 đang ghi là express ^4.19.2, 
+package-lock.json ở máy 1 đang ghi express 4.19.2 và etag 1.1.1 
+khi bưng file package.json và package-lock.json từ máy 1 sang máy 2, 
+nội dung 2 file giữ nguyên
+khi ta chạy npm install
+npm sẽ nhìn vào file package-lock.json sẽ cài chính xác express bản 4.19.2, etag bản 1.1.1 giống máy 1
+chỉ khi nào ở máy 2, ta chạy npm update thì npm mới nhìn vào package.json để xem hướng dẫn update (~^)
+--------------------
+tóm lại: khi bưng sang máy khác, npm install nhìn vào file package-lock.json để cài chính xác version
+khi bưng sang máy khác, sau khi npm install, nếu ta bấm thêm npm update thì npm sẽ nhìn vào file package.json để update
+-----------trong file package-lock.json, ta hay thấy dependencies cấp 3 sẽ có thể có ~ và ^ 
+xem ví dụ sau đây để hiểu: 
+package.json ở máy 1 đang ghi là express ^4.19.2, 
+package-lock.json ở máy 1 đang ghi express 4.19.2 và etag 1.1.1 , xxx là ^2.2.2
+khi bưng file package.json và package-lock.json từ máy 1 sang máy 2, 
+nội dung 2 file giữ nguyên
+khi ta chạy npm install
+npm sẽ nhìn vào file package-lock.json sẽ cài chính xác express bản 4.19.2, etag bản 1.1.1 giống máy 1
+nhưng vì XXX là ^2.2.2 nên npm sẽ tìm bản mới nhất để cài vào (npm install thì xxx đã cài bản mới nhất, ko cần chờ tới npm update)
+--------------------
+tóm lại: 
+package.json định nghĩa version nhỏ nhất của express và controles how updates are handled when you run npm update
+package-lock.json ghi lại chính xác dependencies cấp 1 2 3 là version nào khi npm install
+--------------
+4.19.2 ko tự động cập nhật
+^4.19.2 cho phép cập nhật 4.X.X
+~4.19.2 cho phép cập nhật 4.19.X

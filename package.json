@@ -1,0 +1,15 @@
+{
+  "name": "dev_tinder_be",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "start": "node src/app.js",
+    "dev": "nodemon src/app.js"
+  },
+  "author": "phungquynh1899",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^4.21.0"
+  }
+}
