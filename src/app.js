@@ -2,48 +2,36 @@
 const express = require('express');
 const app = express();
 
-app.use("/handle", (req, res) => {
-    //cái hàm này chính là route handler
-    //nếu trong ruột hàm ko có gì hết thì khi gửi req tới /handle, vòng tròn trên browser sẽ xoay hoài đến timeout thì thôi
-    //nên bắt buộc phải có res.send cái gì đó
+//khi gọi tới /handler thì sẽ đi qua các hàm /, hàm handler số 1 2 3 
+//tại sao lại đi qua hàm / mà ko dừng lại
+//vì khi 1 request đi tới, express sẽ cố gắng tìm tất cả các hàm match với /handler
+//ở trong code này có / và /handler match với /hander của request 
+//nên các hàm / , 1st, 2nd, 3rd được thực thi từ trên xuống
+// cho dù giữa đường có res.send() thì tất cả các hàm match với /handler đều được thực thi
+// quy ước từ đây về sau: 
+// hàm / và các hàm hanlder 1, 2, 3 đều được gọi chung là midleware handler 
+// trong 4 hàm này, hàm nào chứa res.send mới được gọi là route handler
+app.use("/", (req, res, next) => {
+    console.log('im / handler ');
+    res.send('hello from the / handler');
+    next();
 })
 
-app.use("/anotherHandler",
+app.get("/handler",
     (req, res, next) => {
-        //đây là hàm handler thứ 1
-        //hàm send chỉ được gửi 1 lần tới client
-        res.send('đây là handler thứ nhất');
-        //hàm next đeer gọi handler thứ 2, nếu ko có next() thì node chỉ thực thi hàm handler thứ 1
-        //muốn sử dụng next() phải thêm next param vào 
-        //chỉ cần có next, chắc chắn handler thứ 2 sẽ được thực thi
-        //nhưng send chỉ được gửi 1 lần
+        console.log('the 1st handler');
         next();
-        console.log("kêt thúc hàm handler thứ nhất");
     },
-    (req, res) => {
-        //đây là hàm handler thứ 2
-        console.log('băt đầu handler thứ 2');
-        //do hàm send chỉ được gửi 1 lần tới client nên cho dù handler thứ 2 được gọi bởi next() thì send này chắc chắn báo lỗi
-        res.send("đây là handler thứ hai"); //do handler 1 đã send tới client rồi, send lần 2 nữa nên bi báo lỗi
-        console.log("kêt thúc hàm handler thứ hai");
-    })
+    (req, res, next) => {
+        console.log('the 2nd handler');
+        next();
+    },
+    (req, res, next) => {
+        console.log('the 3rd handler');
+        res.send('hello from the 3rd handler');
+    },
 
-    app.get("/handlerWithMultipleNext", 
-        (req, res, next) => {
-            console.log('the 1st handler');
-            next();
-        },
-        (req, res, next) => {
-            console.log('the 2nd handler');
-            next();
-        },
-        (req, res, next) => {
-            console.log('the 3rd handler');
-            //next(); //tới đây chắc chắn lỗi do next kỳ vọng có hàm 4th handler nhưng ko có
-            //nếu bỏ next() ở hàm này thì chắc chắn browser sẽ treo do chờ quài không thấy res.send() đâu
-        },
-
-    )
+)
 app.listen(8889);
 
 

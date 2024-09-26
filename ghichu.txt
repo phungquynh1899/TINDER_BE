@@ -9,6 +9,8 @@
 9. đọc query và params từ request object
 10. nếu route handler ko có trả về gì hết ==> timeout 
 11. 1 route có nhiều route handler và sử dụng next() để kết nối các route handler
+12. định nghĩa lại route handler và midleware handler
+13. what is midleware? how express js handled request behinds the scence
 -------------
 tại sao cần nodemon? 
 (mỗi lần cập nhật code là phải ctrl c rồi node src/app.js rất phiền)
