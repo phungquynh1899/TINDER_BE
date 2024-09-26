@@ -5,6 +5,10 @@
 5. npm i -g nodemon 
 6. vào package.json scripts gõ "start": "node src/app.js", "dev": "nodemon src/app.js"
 7. khác biệt giữa app.use() và app.get() 
+8. regular expression áp dụng cho route (+*? ())
+9. đọc query và params từ request object
+10. nếu route handler ko có trả về gì hết ==> timeout 
+11. 1 route có nhiều route handler và sử dụng next() để kết nối các route handler
 -------------
 tại sao cần nodemon? 
 (mỗi lần cập nhật code là phải ctrl c rồi node src/app.js rất phiền)
@@ -128,4 +132,24 @@ app.get("/hi", (req, res)=>{
 });
 
 ---------- 
-thứ tự của các route rất quan trọng
+thứ tự của các route rất quan trọng 
+-----------
+9. request's params : 
+nếu 
+app.get('/query/:userID',(req, res)=>{
+    res.send(req.params);
+})
+thì khi 
+localhost:8889/query/501230006 ====> req.params = {userID: 501230006}
+
+request's query : 
+nếu 
+app.get('/query2',(req, res)=>{
+    res.send(req.query);
+})
+
+thì localhost:8889/query2?productName=paracetamol&dose=500mg 
+====> req.query = {
+    "productName": "paracetamol",
+    "dose": "500mg"
+}
