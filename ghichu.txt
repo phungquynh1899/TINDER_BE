@@ -13,6 +13,7 @@
 13. what is midleware? how express js handled request behinds the scence
 14. app.use vs app.all
 15. midleware thường dùng để thực hiện các công việc chung như xác thực...
+16. error handling 
 -------------
 tại sao cần nodemon? 
 (mỗi lần cập nhật code là phải ctrl c rồi node src/app.js rất phiền)
