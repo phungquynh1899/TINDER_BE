@@ -11,6 +11,8 @@
 11. 1 route có nhiều route handler và sử dụng next() để kết nối các route handler
 12. định nghĩa lại route handler và midleware handler
 13. what is midleware? how express js handled request behinds the scence
+14. app.use vs app.all
+15. midleware thường dùng để thực hiện các công việc chung như xác thực...
 -------------
 tại sao cần nodemon? 
 (mỗi lần cập nhật code là phải ctrl c rồi node src/app.js rất phiền)
