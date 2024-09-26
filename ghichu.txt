@@ -4,7 +4,7 @@
 4. tạo server đầu tiên, tạo router handler đầu tiên
 5. npm i -g nodemon 
 6. vào package.json scripts gõ "start": "node src/app.js", "dev": "nodemon src/app.js"
-
+7. khác biệt giữa app.use() và app.get() 
 -------------
 tại sao cần nodemon? 
 (mỗi lần cập nhật code là phải ctrl c rồi node src/app.js rất phiền)
@@ -81,7 +81,51 @@ nhưng vì XXX là ^2.2.2 nên npm sẽ tìm bản mới nhất để cài vào 
 tóm lại: 
 package.json định nghĩa version nhỏ nhất của express và controles how updates are handled when you run npm update
 package-lock.json ghi lại chính xác dependencies cấp 1 2 3 là version nào khi npm install
+
 --------------
 4.19.2 ko tự động cập nhật
 ^4.19.2 cho phép cập nhật 4.X.X
 ~4.19.2 cho phép cập nhật 4.19.X
+
+-----------------
+quá trình tạo file 
+khi thư mục trống, mình gõ npm init -y thì file package.json được tạo, bên trong rỗng 
+khi mình gõ npm install electron thì 
+file package.json sẽ có thêm electron
+file package-lock.json được tạo ra, chứa tất cả electron (dep cấp 1) và dep cấp 2 , dep cấp 3
+---mình xoá node_modules, sau đó npm install lại 
+th1: néu có đủ 2 file package.json và package-lock.json thì
+Step 1: npm checks package-lock.json  và install for the exact versions of each package and its dependencies.
+Step 2: npm check lại package.json, nếu có dep có trong package.json mà ko có trong package-lock.json thì cài theo hướng dẫn của package.json
+------------
+th2: nếu chỉ có package.json thì cài đại theo hướng dẫn của package.json
+------------
+th3: nếu chỉ có package-lock.json thì ko cài được gì do 
+npm checks package.json to know dependencies cấp 1 là đứa nào (dù trong package-lock.json cũng có)
+rồi sau đó mới ngó sang package-lock.json only to determine the exact version.
+======> cho nên ai hỏi thì nói là cả 2 file đều cần thiết để đẩy lên git
+-----------------
+git ignore: ban đầu khi nhìn vào biểu tượng git ở góc trên trái (dưới biểu tượng kính lúp), ta thấy số 512... rất lớn, những thay đổi trong file này là của node_modules
+mình ko cần node_modules được đẩy lên git làm gì vì mình đã có package.json và package-lock.json
+======> tạo file tên .gitignore tại 
+---dev_tinder_be 
+    |_ .gitignore
+thêm vào file .gitignore nội dung là 
+node_modules/
+để cẩn thận, ta chạy thêm lệnh dưới để loại node_modules ra khỏi git nếu những lần trước lỡ commit có node_modules
+git rm -r --cached node_modules
+====> vậy là xong, git add . như bình thường (bật git status lên để kiểm tra, lúc này git tự động loại bỏ node_modules)
+
+-----------------
+7. khác biệt giữa app.use() và app.get() 
+//ta có thể dùng post method + /hi  hoặc put, hoặc patch hoặct get bất kỳ đều trả về 
+app.use("/hi", (request, response)=>{
+     response.send('/hi from server')
+})
+//ta chỉ nhận được kết quả khi dùng GET + /hi
+app.get("/hi", (req, res)=>{
+    res.send('hi from get method')
+});
+
+---------- 
+thứ tự của các route rất quan trọng
