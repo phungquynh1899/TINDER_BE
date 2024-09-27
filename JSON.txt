@@ -1,0 +1,4 @@
+1. phân việt JSON và js object (key của json phải là string, key của js thì ko cần) và tại sao lại có sự khác biệt đó
+2. gửi form bằng body trong postman (chọn raw, json), đọc bằng res.body
+3. parse để chuyển json thành js object, stringtify để chuyển js object thành json
+4. express.json() middleware để chuyển json thành js object 

@@ -13,16 +13,15 @@ connectDB()
     console.log('failed to connect to database, please contact to support team');
 })
 
+//dữ liệu gửi tới ở dạng json, nodejs ko đọc được
+//express.json () không có ghi route cụ thể 
+//để bắt tất cả dữ liệu gửi tới tất cả đường link và chuyển dữ liệu thành js object
+app.use(express.json());
+
 app.post("/signup", async (req, res) =>{
     try{
-        const userObj = {
-            firstName: 'quynh',
-            lastName: 'nguyen',
-            email: "quynhnguyen123@gmail.com",
-            password: '123456789'
-        }
-    
-        const user = new User(userObj);
+        //dữ liệu gửi từ postman bằng cách sử dung body
+        const user = new User(req.body);
         await user.save();
         res.send("add user sucessfully");
     }
