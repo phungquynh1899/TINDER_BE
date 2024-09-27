@@ -3,6 +3,8 @@
 3. đảm bảo connect tới database thành công rồi mới app.listen
 4. tạo thư mục src / models / user.js
 5. tạo schema đầu tiên bằng mongoose
+6. tạo api gửi data đầu tiên 
+7. không nên đụng đến những field do mongodb tự tạo (_id và __v)
 ------------------
 1. database.js chuyên đảm nhận việc kết nối đến database, 
 3. nếu app.listen trước, có nghĩa server bắt đầu tiếp nhận request, nhưng lỡ xui kết nối tới databse có vấn đề ==> gây ấn tượng xấu, khách hàng bỏ đi, doanh nghiệp phá sản :v

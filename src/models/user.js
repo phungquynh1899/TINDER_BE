@@ -23,6 +23,9 @@ const userSchema = mongoose.Schema({
 })
 //User bắt buộc viết hoa, coi như model là 1 class, tên class thì phải viết hoa
 //coi map table sang class
-const User = mongoose.models(userSchema);
+//model khong co s 
+//"User" trong model là tên bảng trong mongodb
+//thực tế mongo tự chuyển User thành users
+const User = mongoose.model("User", userSchema);
 
 module.exports = {User: User}
