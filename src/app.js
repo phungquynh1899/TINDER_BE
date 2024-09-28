@@ -43,7 +43,19 @@ app.get("/feed", async (req, res) =>{
         res.send(userInfo);
     }
     catch(error){
-        res.send('an error occurs');
+        res.status(400).send('an error occurs');
+    }
+})
+
+//DELETE /user based on userID
+app.delete('/user', async (req, res) => {
+    try{
+        const userID = req.body.userID;
+        await User.findByIdAndDelete({_id: userID});
+        res.send('delete user successfully');
+    }
+    catch(error){
+        res.status(400).send('can not delete user');
     }
 })
 
@@ -59,4 +71,16 @@ app.post("/signup", async (req, res) =>{
     }
 })
 
-
+//PATCH /user 
+//nếu dữ liệu gửi tới bị thừa (ko có trong user schema) thì mongo ko quan tâm
+app.patch("/user", async (req, res)=>{
+    try{
+        const userID = req.body.userID;
+        const dataToUpdate = req.body;
+        await User.findByIdAndUpdate({_id: userID}, dataToUpdate);
+        res.send('update user successfully');
+    }
+    catch(error){
+        res.send("failed to update user 's data");
+    }
+})
