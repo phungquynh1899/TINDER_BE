@@ -18,6 +18,35 @@ connectDB()
 //để bắt tất cả dữ liệu gửi tới tất cả đường link và chuyển dữ liệu thành js object
 app.use(express.json());
 
+//GET /user to search a user by email
+app.get("/user", async (req, res) =>{
+    try{
+        const userEmail = req.body.email;
+        //trả về array các user có email 
+        const userInfo = await User.find({email: userEmail});
+        if(userInfo.length === 0){
+            res.status(404).send('cannot found this user')
+        }
+        else{
+            res.send(userInfo);
+        }
+    }
+    catch(error){
+        res.send('an error occurs');
+    }
+})
+
+//GET /feed to sget all the users
+app.get("/feed", async (req, res) =>{
+    try{
+        const userInfo = await User.find({});
+        res.send(userInfo);
+    }
+    catch(error){
+        res.send('an error occurs');
+    }
+})
+
 app.post("/signup", async (req, res) =>{
     try{
         //dữ liệu gửi từ postman bằng cách sử dung body
