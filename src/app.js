@@ -67,20 +67,38 @@ app.post("/signup", async (req, res) =>{
         res.send("add user sucessfully");
     }
     catch(error){
-        res.send("fail to add new user");
+        res.send("fail to add new user" + error);
     }
 })
 
 //PATCH /user 
 //nếu dữ liệu gửi tới bị thừa (ko có trong user schema) thì mongo ko quan tâm
-app.patch("/user", async (req, res)=>{
+app.patch("/user/:userID", async (req, res)=>{
     try{
-        const userID = req.body.userID;
+        //mình muốn cắt quyền update email 
+        //mình muốn cắt quyền update userID (chỉnh /user thành user/:userID)
+        const userID = req.params?.userID;
         const dataToUpdate = req.body;
-        await User.findByIdAndUpdate({_id: userID}, dataToUpdate);
+        const ALLOWED_UPDATE = ['password', 'age', 'gender', 'about', 'skills'];
+        //Object.keys(dataToUpdate) trả về ["userID", "email", "lastName",...]
+        //every duyệt qua từng phần từ trong ["userID", "email", "lastName",...]
+        //nếu có 1 phần từ không thoã callback ==> isAllowedToUpdate = false 
+        //nhớ phải return trong every
+        const isAllowedToUpdate = Object.keys(dataToUpdate).every((key)=>{
+            return ALLOWED_UPDATE.includes(key);
+        });
+        console.log(dataToUpdate);
+       
+        console.log(isAllowedToUpdate);
+        
+        if(!isAllowedToUpdate){
+            throw new Error('các trường cần update không hợp lệ');
+        }
+        await User.findByIdAndUpdate({_id: userID}, dataToUpdate, 
+            {runValidators: true});
         res.send('update user successfully');
     }
     catch(error){
-        res.send("failed to update user 's data");
+        res.send("failed to update user 's data" + error);
     }
 })

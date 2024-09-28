@@ -1,0 +1,23 @@
+1. restriction in database: unique, require, default, lowercase
+trim, minLength (string), min (number)
+validate() chỉ chạy khi add new user ( user.save() )
+nếu muốn validate cũng chạy khi update new user (patch) thì findByUserAndUpdate phải cập nhật
+thay vì tạo field thời gian (createAt và updateAt), mg cho sẵn timestamp : true nhét vào Schema
+
+ await User.findByIdAndUpdate({_id: userID}, dataToUpdate, 
+            {runValidators: true});
+
+2. vấn đề: khi update, mình muốn ko cho user update email
+
+3. mình ko muốn cho user update userID, 
+phương hướng là đưa user lên đường link và chỉnh /user thành user/:userID
+
+4. khi update, hacker có thể cho skill là 1 array chứa 1000000 items ==> db tèo luôn
+==> validate() phù hợp hơn là sanitize trong app.post (vì chỉ có tác dụng trong post)
+
+5. phải sanitize 2 bước: trong api và trong database
+
+6. ? là gì? tại sao mình ko hê tạo database users nhưng mỗi khi signup đều tự tạo
+
+7. npm i validator để sử dụng validator cho những thứ khó nhằn (email, password)
+(dùng ở 2 file app và user)
